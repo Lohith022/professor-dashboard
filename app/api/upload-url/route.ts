@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { NextResponse } from "next/server";
@@ -22,14 +24,12 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Missing fileName or fileType" }, { status: 400 });
     }
 
-    // Create S3 upload command
     const command = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME!,
       Key: `uploads/${fileName}`,
       ContentType: fileType,
     });
 
-    // Generate signed URL
     const signedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
 
     return NextResponse.json({ url: signedUrl });
