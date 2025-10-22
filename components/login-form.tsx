@@ -16,22 +16,34 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  const validateEmail = (email: string) => {
+  // No digits allowed at all after '@'
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z.-]+\.[a-zA-Z]{2,}$/;
+  const domainPart = email.split("@")[1];
+  if (!domainPart || /\d/.test(domainPart)) return false;
+  return emailPattern.test(email);
+};
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateEmail(email)) {
+      alert("Please enter a valid email address (e.g. name@domain.com)");
+      return;
+    }
+
     setIsLoading(true);
 
-    // Simulate login process (you can replace this with your real API call)
+    // Simulate login delay
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    // ✅ Accept any valid email/password for demo
     if (email && password) {
-      // --- Store the user name dynamically ---
-      const nameFromEmail = email.split("@")[0]; // e.g. "adithya"
+      const nameFromEmail = email.split("@")[0];
       const formattedName =
         "Prof. " + nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1);
       localStorage.setItem("userName", formattedName);
 
-      // ✅ Redirect to dashboard
       router.push("/dashboard");
     } else {
       alert("Please enter email and password!");
